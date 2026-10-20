@@ -30,7 +30,9 @@ const App = (() => {
     Chat.init();
     if (typeof Sound !== 'undefined') Sound.init();
     if (typeof Palette !== 'undefined') Palette.init();
-    if (typeof Sync !== 'undefined') Sync.init();
+    // Personal build: device sync phones home to the AI worker (guarded off in
+    // js/api.js), so its auto-start is skipped. Sync.openModal() still works
+    // for the tests; enabling just errors out.
     Shell.init({
       getView: () => currentView,
       getTab: () => currentTab
@@ -48,9 +50,12 @@ const App = (() => {
       showToast
     });
     setupDemo();
+    Decks.seedFolders(); // first run only: 5 subject folders, never touches data
+    if (typeof Mistakes !== 'undefined') Mistakes.init();
     Library.render();
     if (typeof Today !== 'undefined') Today.init();
-    if (typeof Gallery !== 'undefined') Gallery.init();
+    // Personal build: community gallery phones home to the AI worker — its
+    // auto-start is skipped for the same reason.
     registerServiceWorker();
     checkShareLink() || checkSavedData();
   }

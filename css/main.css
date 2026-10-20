@@ -1014,3 +1014,20 @@ button:focus:not(:focus-visible), input:focus:not(:focus-visible), textarea:focu
   white-space: pre-wrap; line-height: 1.6; font-family: var(--font-content);
   font-size: 0.92rem; color: var(--text);
 }
+
+/* ===== Personal build: AI/cloud features disabled =====
+   These controls all need the AI worker (whose API is now guarded to fail
+   fast in js/api.js). They are hidden, not removed, so the existing tests —
+   which click some of them via DOM — keep passing. */
+#generate-btn,
+.generate-settings,
+.generate-hint,
+.url-import-row,
+#share-btn,
+.study-tab[data-tab="chat"],
+#gen-more-q-btn,
+#harder-mistakes-btn,
+#weekly-report-btn,
+.explain-btn {
+  display: none !important;
+}

@@ -11,10 +11,16 @@ const Decks = (() => {
   const record = v => v && typeof v === 'object' && !Array.isArray(v);
   const safeId = id => typeof id === 'string' && /^[a-zA-Z0-9_-]+$/.test(id) && !['__proto__', 'constructor', 'prototype'].includes(id);
 
+  // Persisted reads/writes go through the Store adapter when it's loaded
+  // (same getItem/setItem contract as localStorage); direct localStorage is
+  // the fallback so the node test harness (which has no Store) keeps working.
+  const sGet = k => { try { return (typeof Store !== 'undefined' ? Store.getItem(k) : localStorage.getItem(k)); } catch (e) { return null; } };
+  const sSet = (k, v) => { try { return (typeof Store !== 'undefined' ? Store.setItem(k, v) : (localStorage.setItem(k, v), true)); } catch (e) { return false; } };
+
   function load() {
     if (store) return store;
     try {
-      store = JSON.parse(localStorage.getItem(STORE_KEY)) || null;
+      store = JSON.parse(sGet(STORE_KEY)) || null;
     } catch (e) { store = null; }
     if (!record(store) || !record(store.decks)) store = { decks: {}, activeId: null };
     if (!record(store.deleted)) store.deleted = {};
@@ -47,9 +53,7 @@ const Decks = (() => {
   }
 
   function persist() {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(store));
-    } catch (e) {
+    if (!sSet(STORE_KEY, JSON.stringify(store))) {
       // Never discard study material to make room. Keep the in-memory copy
       // available for export and explain that this write was not durable.
       if (typeof App !== 'undefined') App.showToast(i18n.getLang() === 'tr'
@@ -291,6 +295,39 @@ const Decks = (() => {
     return deck && Array.isArray(deck.mistakes) ? deck.mistakes : [];
   }
 
+  // File one question into a SPECIFIC deck's mistake notebook (used by the
+  // manual mistake form). Same type+question dedup rule as addMistakes.
+  function fileMistake(deckId, q) {
+    load();
+    const deck = store.decks[deckId];
+    if (!deck || !q) return;
+    deck.mistakes = Array.isArray(deck.mistakes) ? deck.mistakes : [];
+    const k = mistakeKey(q);
+    if (!deck.mistakes.some(m => mistakeKey(m) === k)) {
+      deck.mistakes.push(JSON.parse(JSON.stringify(q)));
+    }
+    deck.updatedAt = Date.now();
+    persist();
+  }
+
+  // First-run seeding, called from App.init (NOT from load(), so the node
+  // test harness driving Decks directly is unaffected): one "Mistakes" deck
+  // per subject folder. Runs once, and only on an empty library — existing
+  // user data is never touched.
+  function seedFolders() {
+    const FLAG = 'flashmind_seed_v1';
+    if (sGet(FLAG)) return false;
+    load();
+    if (Object.keys(store.decks).length) { sSet(FLAG, '1'); return false; }
+    ['Physics', 'Chemistry', 'Math', 'Arabic', 'English'].forEach(subject => {
+      const deck = createDeck(Parser.normalizeStudyData({ title: 'Mistakes', flashcards: [], quiz: [] }), '');
+      deck.folder = subject;
+    });
+    persist();
+    sSet(FLAG, '1');
+    return true;
+  }
+
   // ----- FSRS spaced repetition (replaces SM-2) -----
   // srs[cardId] = { stab (days), diff (1-10), reps, lapses, due (ms), last (ms) }
   // FSRS-4.5 with the published default weights. The three rating buttons map
@@ -422,7 +459,7 @@ const Decks = (() => {
 
   return {
     save, get, getActive, setActive, list, remove, touch, rename, duplicate,
-    setFolder, folders, mergeInto,
+    setFolder, folders, mergeInto, seedFolders, fileMistake,
     getSrs, review, reviewIn, dueCards, dueAcrossDecks, statusOf,
     addMistakes, resolveMistakes, getMistakes, mergeRemote, snapshot
   };

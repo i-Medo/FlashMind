@@ -1,6 +1,11 @@
 // ===== API Module =====
 const API = (() => {
-  const WORKER_URL = 'https://flashmind-proxy.mortuexhavoc.workers.dev';
+  // Personal build: AI/cloud features are disabled. The worker URL points at
+  // an unfetchable address, so no request can ever leave the device — every
+  // caller already handles rejection (offline grading fallback, error
+  // toasts). Tests override these methods or mock fetch, so they're
+  // unaffected.
+  const WORKER_URL = 'about:blank'; // upstream: 'https://flashmind-proxy.mortuexhavoc.workers.dev'
 
   async function generate(text, flashcardConfig, quizConfig) {
     const res = await fetch(WORKER_URL, {

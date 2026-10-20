@@ -54,7 +54,7 @@ const Library = (() => {
       </span>
       <span class="deck-library-tools">
         ${allDecks.length > 4 ? `<input type="text" id="deck-search" class="deck-search" placeholder="${T('searchDecks')}" value="${escText(librarySearch)}">` : ''}
-        <button class="btn-ghost deck-sync-btn" id="deck-sync-btn">&#10227; ${T('syncTitle')}</button>
+        <button class="btn-ghost" id="add-mistake-btn">&#65291; Add mistake</button>
         <button class="btn-ghost deck-sync-btn" id="deck-backup-btn">&#128190; ${T('backupBtn')}</button>
       </span>
     </div><div class="deck-library-grid">`;
@@ -134,8 +134,8 @@ const Library = (() => {
     const notifyBtn = document.getElementById('today-notify-btn');
     if (notifyBtn) notifyBtn.addEventListener('click', () => Today.toggleNotify());
 
-    const syncBtn = document.getElementById('deck-sync-btn');
-    if (syncBtn) syncBtn.addEventListener('click', () => Sync.openModal());
+    const mistakeBtn = document.getElementById('add-mistake-btn');
+    if (mistakeBtn) mistakeBtn.addEventListener('click', () => { if (typeof Mistakes !== 'undefined') Mistakes.openForm(); });
     const backupBtn = document.getElementById('deck-backup-btn');
     if (backupBtn) backupBtn.addEventListener('click', () => Export.backupAll());
 
