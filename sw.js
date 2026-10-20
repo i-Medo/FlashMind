@@ -1,6 +1,6 @@
 // FlashMind service worker — app-shell caching for offline study of saved decks.
 // Bump CACHE when any shell asset changes so clients pick up the new version.
-const CACHE = 'flashmind-v10';
+const CACHE = 'flashmind-v11';
 
 // Same-origin shell assets. Third-party (PDF.js CDN) and API/worker calls are
 // intentionally excluded — they fall through to the network.
@@ -40,6 +40,8 @@ const SHELL = [
   './js/export.js',
   './js/shell.js',
   './js/library.js',
+  './js/store.js',
+  './js/mistakes.js',
   './js/gallery.js',
   './js/app.js',
   './assets/favicon.svg',
