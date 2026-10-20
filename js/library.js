@@ -15,7 +15,7 @@ const Library = (() => {
     showToast = opts.showToast;
     // Close any open deck kebab menu on outside clicks.
     document.addEventListener('click', () => {
-      document.querySelectorAll('.deck-menu').forEach(m => { m.style.display = 'none'; });
+      document.querySelectorAll('.deck-menu').forEach(m => { m.style.display = 'none'; const c = m.closest('.deck-card'); if (c) c.style.zIndex = ''; });
     });
   }
 
@@ -164,7 +164,7 @@ const Library = (() => {
 
     // Kebab menus: one open at a time; a persistent document listener
     // (registered once in init) closes them on any outside click.
-    const closeMenus = () => wrap.querySelectorAll('.deck-menu').forEach(m => { m.style.display = 'none'; });
+    const closeMenus = () => wrap.querySelectorAll('.deck-menu').forEach(m => { m.style.display = 'none'; const c = m.closest('.deck-card'); if (c) c.style.zIndex = ''; });
     wrap.querySelectorAll('[data-menu]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -172,6 +172,10 @@ const Library = (() => {
         const isOpen = menu.style.display !== 'none';
         closeMenus();
         menu.style.display = isOpen ? 'none' : 'block';
+        // The card's entrance animation leaves a transform on it, trapping the
+        // menu's z-index inside the card — the next card then paints over the
+        // open menu. Lifting the whole card above its siblings fixes that.
+        if (!isOpen) { const card = menu.closest('.deck-card'); if (card) card.style.zIndex = '80'; }
       });
     });
 

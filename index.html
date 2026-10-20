@@ -90,10 +90,14 @@
         <button id="append-cancel-btn" class="btn-ghost">Cancel</button>
       </div>
 
+      <!-- Saved decks library (hidden when empty) — personal build: the
+           library is the home screen, above the import card -->
+      <div id="deck-library" class="deck-library" style="display:none"></div>
+
       <div class="input-card">
       <!-- Input Tabs -->
       <div class="input-tabs">
-        <button class="input-tab active" data-input-tab="profile">
+        <button class="input-tab" data-input-tab="profile">
           <svg viewBox="0 0 24 24" fill="none"><path d="M22 9L12 4 2 9l10 5 10-5zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           <span class="input-tab-label">10. Sınıf</span>
         </button>
@@ -101,7 +105,7 @@
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           <span class="input-tab-label">Paste Text</span>
         </button>
-        <button class="input-tab" data-input-tab="pdf">
+        <button class="input-tab active" data-input-tab="pdf">
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7 9m5-5l5 5M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="input-tab-label">Upload PDF / JSON</span>
         </button>
@@ -112,7 +116,7 @@
       </div>
 
       <!-- 10th-grade study profile -->
-      <div class="input-panel active" id="profile-panel"></div>
+      <div class="input-panel" id="profile-panel"></div>
 
       <!-- Paste Text Panel -->
       <div class="input-panel" id="paste-panel">
@@ -130,7 +134,7 @@
       </div>
 
       <!-- Upload PDF Panel -->
-      <div class="input-panel" id="pdf-panel">
+      <div class="input-panel active" id="pdf-panel">
         <div id="pdf-dropzone" class="dropzone">
           <svg class="dropzone-icon" viewBox="0 0 48 48" fill="none">
             <path d="M14 36h20V22h8L24 4 6 22h8v14z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
@@ -232,9 +236,6 @@
       <div id="gen-progress" class="gen-progress" style="display:none"></div>
       <p class="generate-hint">Ctrl + Enter</p>
       </div>
-
-      <!-- Saved decks library (hidden when empty) -->
-      <div id="deck-library" class="deck-library" style="display:none"></div>
 
       <!-- Community gallery (hidden until the worker returns entries) -->
       <div id="gallery-section" class="deck-library gallery-section" style="display:none"></div>

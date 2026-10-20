@@ -1031,3 +1031,23 @@ button:focus:not(:focus-visible), input:focus:not(:focus-visible), textarea:focu
 .explain-btn {
   display: none !important;
 }
+
+/* ===== Personal build: mobile fixes (2026-10-20 phone QA) =====
+   1) The page measured wider than a phone screen (the deck-library header
+      row alone needs ~465px), which also pushed fixed dialogs off-centre.
+   2) Dialogs are capped to the viewport so their buttons stay reachable.
+   3) The Turkish curriculum / AI input tabs are hidden like the rest of the
+      AI surface — the library above is the home screen; deck import stays. */
+html { overflow-x: clip; }
+.deck-library-head { flex-wrap: wrap; gap: 10px; }
+.deck-library-tools { flex: 1 1 200px; min-width: 0; flex-wrap: wrap; }
+.deck-search { flex: 1 1 120px; min-width: 0; }
+.shortcuts-backdrop .shortcuts-card { max-width: min(380px, calc(100vw - 32px)) !important; }
+.input-tab[data-input-tab="profile"],
+.input-tab[data-input-tab="paste"],
+.input-tab[data-input-tab="topic"],
+#profile-panel,
+#paste-panel,
+#topic-panel {
+  display: none !important;
+}
